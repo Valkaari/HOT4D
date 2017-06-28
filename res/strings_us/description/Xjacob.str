@@ -1,0 +1,7 @@
+STRINGTABLE Xjacob
+{
+	Xjacob      "HOT4D Jacobian Shader ";
+  
+    ID_LINKHOT4D  "HOT4D Object";
+
+}
