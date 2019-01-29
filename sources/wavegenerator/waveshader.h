@@ -33,24 +33,24 @@ public:
 	virtual	INITRENDERRESULT        InitRender  (BaseShader *sh, const InitRenderStruct &irs);
 	virtual	void                    FreeRender  (BaseShader *sh);
 	
-	static NodeData *Alloc(void) { return gNew WaveShaderDisp; }
+	static NodeData *Alloc() { return NewObjClear(WaveShaderDisp); }
     
     
     drw::Ocean                      *_ocean;
     drw::OceanContext               *_ocean_context;
-    Real                           _ocean_scale;
+    Float                           _ocean_scale;
     Vector                          *padr;
-    LONG                            pcnt;
-    Real                            stepsize;
-    Real                            oneOverStepSize;
-    LONG                            disp_type;
-    bool                            _ocean_needs_rebuild;
+    Int32                            pcnt;
+    Float                            stepsize;
+    Float                            oneOverStepSize;
+    Int32                            disp_type;
+    Bool                            _ocean_needs_rebuild;
 
 private:
-    double                          OceanSize, WindSpeed, WindDirection, ShrtWaveLenght, WaveHeight, chopAmount, DampReflection, WindAlign, OceanDepth, Time;
-    int                             OceanResolution, Seed;
-    bool                            doCatmuInter, doJacobian, doChopyness, doNormals;
-    Real                            _MapRange(Real value, Real min_input, Real max_input, Real min_output, Real max_output);
+    Float                          OceanSize, WindSpeed, WindDirection, ShrtWaveLenght, WaveHeight, chopAmount, DampReflection, WindAlign, OceanDepth, Time;
+    Int32                             OceanResolution, Seed;
+    Bool                            doCatmuInt32er, doJacobian, doChopyness, doNormals;
+    Float                            _MapRange(Float value, Float min_input, Float max_input, Float min_output, Float max_output);
     
     
     // This is where all the wave action takes place
@@ -63,7 +63,7 @@ private:
     Called when a new instance of the node plugin has been allocated. You can use this function to for example fill the BaseContainer of the connected node with default values:
  
  Output is from shaderData class
-    Called for each point of the visible surface of a shaded object. Here you should calculate and return the channel color for the point cd->p.
+    Called for each poInt32 of the visible surface of a shaded object. Here you should calculate and return the channel color for the poInt32 cd->p.
     Important: No OS calls are allowed during this function. Doing so could cause a crash, since it can be called in a multi-processor context.
  
  InitRender is from ShaderData CLass :

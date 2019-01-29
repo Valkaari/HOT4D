@@ -62,7 +62,7 @@ namespace drw {
     
     {	
         public :
-        int             _M , _N;
+        Int32             _M , _N;
         
         my_float           _Lx, _Lz;
         
@@ -78,7 +78,7 @@ namespace drw {
         
         
         matrix_f        _Jxx , _Jzz, _Jxz ;
-        bool            _do_disp_y , _do_normals, _do_chop , _do_jacobian;
+        Bool            _do_disp_y , _do_normals, _do_chop , _do_jacobian;
         float           disp[3], normal[3] , Jminus, Jplus,Eminus[3],Eplus[3] ;
         
         
@@ -92,13 +92,13 @@ namespace drw {
         inline void     compute_eigenstuff(const my_float& jxx,const my_float& jzz,const my_float& jxz);
         void            eval_xz(float x,float z);
         void            eval2_xz(float x,float z);
-        void            eval_ij(int i,int j);
+        void            eval_ij(Int32 i,Int32 j);
         
         ~OceanContext(void);
         
         
     private:
-        OceanContext(int m,int n,float Lx,float Lz,bool hf,bool chop,bool normals,bool jacobian);
+        OceanContext(Int32 m,Int32 n,float Lx,float Lz,Bool hf,Bool chop,Bool normals,Bool jacobian);
         friend class Ocean;
         
     };
@@ -107,7 +107,7 @@ namespace drw {
     {
         public :
         
-        Ocean(int M,int N,
+        Ocean(Int32 M,Int32 N,
               my_float dx,my_float dz,
               my_float V,
               my_float l,
@@ -116,19 +116,19 @@ namespace drw {
               my_float damp,
               my_float alignment,
               my_float depth,
-              int seed);
+              Int32 seed);
         
         virtual ~Ocean() 
         {
             
         }
-        OceanContext *new_context(bool hf,bool chop,bool normals,bool jacobian);
+        OceanContext *new_context(Bool hf,Bool chop,Bool normals,Bool jacobian);
         
         
         my_float            Ph(my_float kx,my_float kz ) const;
         
         
-        void                update(float t, OceanContext& r, bool do_heightfield, bool do_chop, bool do_normal, bool do_jacobian, float scale, float chop_amount);
+        void                update(float t, OceanContext& r, Bool do_heightfield, Bool do_chop, Bool do_normal, Bool do_jacobian, float scale, float chop_amount);
         my_float            wavelength(my_float k)  const;
         my_float            omega(my_float k) const;
         float               get_height_normalize_factor();
@@ -138,8 +138,8 @@ namespace drw {
         
         friend class OceanContext;
         
-        int _M;
-        int _N;
+        Int32 _M;
+        Int32 _N;
         
         my_float _V;
         my_float _l;

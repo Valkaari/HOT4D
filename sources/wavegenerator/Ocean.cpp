@@ -10,7 +10,8 @@
 #include "math.h"
 #include <stdio.h>
 #include "c4d.h"
-#include "ge_vector.h"
+//#include "ge_vector.h"
+
 
 #include "Ocean.h"
 
@@ -56,7 +57,7 @@ drw::OceanContext::~OceanContext() {
 }
 
 
-drw::OceanContext::OceanContext(int m,int n,float Lx,float Lz,bool hf,bool chop,bool normals,bool jacobian): _M(m),_N(n),_Lx(Lx),_Lz(Lz), _do_disp_y(hf),_do_normals(normals),_do_chop(chop),_do_jacobian(jacobian)
+drw::OceanContext::OceanContext(Int32 m,Int32 n,float Lx,float Lz,Bool hf,Bool chop,Bool normals,Bool jacobian): _M(m),_N(n),_Lx(Lx),_Lz(Lz), _do_disp_y(hf),_do_normals(normals),_do_chop(chop),_do_jacobian(jacobian)
 {
 
     //Lock lock(*this);
@@ -139,7 +140,7 @@ void drw::OceanContext::alloc_jacobian()
 
 void drw::OceanContext::eval_uv(float u,float v)
 {
-    int i0,i1,j0,j1;
+    Int32 i0,i1,j0,j1;
     float frac_x,frac_z;
     
     // first wrap the texture so 0 <= (u,v) < 1
@@ -152,8 +153,8 @@ void drw::OceanContext::eval_uv(float u,float v)
     float uu = u * _M;
     float vv = v * _N;
     
-    i0 = (int)floor(uu);
-    j0 = (int)floor(vv);
+    i0 = (Int32)floor(uu);
+    j0 = (Int32)floor(vv);
     
     i1 = (i0 + 1);
     j1 = (j0 + 1);
@@ -201,7 +202,7 @@ void drw::OceanContext::eval_uv(float u,float v)
 // use catmullrom interpolation rather than linear
 void drw::OceanContext::eval2_uv(float u,float v)
 {
-    int i0,i1,i2,i3,j0,j1,j2,j3;
+    Int32 i0,i1,i2,i3,j0,j1,j2,j3;
     float frac_x,frac_z;
     
     // first wrap the texture so 0 <= (u,v) < 1
@@ -214,8 +215,8 @@ void drw::OceanContext::eval2_uv(float u,float v)
     float uu = u * _M;
     float vv = v * _N;
     
-    i1 = (int)floor(uu);
-    j1 = (int)floor(vv);
+    i1 = (Int32)floor(uu);
+    j1 = (Int32)floor(vv);
     
     i2 = (i1 + 1);
     j2 = (j1 + 1);
@@ -315,7 +316,7 @@ void drw::OceanContext::eval2_xz(float x,float z)
 // note that this doesn't wrap properly for i,j < 0, but its
 // not really meant for that being just a way to get the raw data out
 // to save in some image format.
-void drw::OceanContext::eval_ij(int i,int j)
+void drw::OceanContext::eval_ij(Int32 i,Int32 j)
 {
     i = abs(i) % _M;
     j = abs(j) % _N;
@@ -347,7 +348,7 @@ void drw::OceanContext::eval_ij(int i,int j)
 }
 
 
-drw::Ocean::Ocean(int M,int N,
+drw::Ocean::Ocean(Int32 M,Int32 N,
                    my_float dx,my_float dz,
                    my_float V,
                    my_float l,
@@ -356,7 +357,7 @@ drw::Ocean::Ocean(int M,int N,
                    my_float damp,
                    my_float alignment,
                    my_float depth,
-                   int seed)
+                   Int32 seed)
 : _M(M),_N(N),
 _V(V),_l(l),_A(A),_w(w),
 _damp_reflections(damp),
@@ -398,41 +399,41 @@ _L(V*V / g)               // largest wave for a given velocity V
     // This is the way described in the paper, where the
     // shift is corrected later ...
     // 
-    //for (int i = 0 ; i  < _M ; ++i)
+    //for (Int32 i = 0 ; i  < _M ; ++i)
     //{
     //    _kx(i) = 2.0f * pi * (i + -_M/2)/ _Lx;
     //}
-    //for (int j = 0 ; j < _N ; ++j)
+    //for (Int32 j = 0 ; j < _N ; ++j)
     //{
     //    _kz(j) = 2.0f * pi * (j + -_N/2)/ _Lz;
     //}   
     
     // the +ve components and DC
-    for (int i = 0 ; i <= _M/2 ; ++i)
+    for (Int32 i = 0 ; i <= _M/2 ; ++i)
     { 
-        _kx(i) = 2.0f * pi * i / _Lx;
+        _kx(i) = 2.0f * PI * i / _Lx;
     }
     // the -ve components
-    for (int i = _M-1,ii=0 ; i > _M/2 ; --i,++ii)
+    for (Int32 i = _M-1,ii=0 ; i > _M/2 ; --i,++ii)
     {
-        _kx(i) = -2.0f * pi * ii / _Lx;
+        _kx(i) = -2.0f * PI * ii / _Lx;
     }
     
     // the +ve components and DC
-    for (int i = 0 ; i <= _N/2 ; ++i)
+    for (Int32 i = 0 ; i <= _N/2 ; ++i)
     { 
-        _kz(i) = 2.0f * pi * i / _Lz;
+        _kz(i) = 2.0f * PI * i / _Lz;
     }
     // the -ve components
-    for (int i = _N-1,ii=0 ; i > _N/2 ; --i,++ii)
+    for (Int32 i = _N-1,ii=0 ; i > _N/2 ; --i,++ii)
     {
-        _kz(i) = -2.0f * pi * ii / _Lz;
+        _kz(i) = -2.0f * PI * ii / _Lz;
     }
     
     // pre-calculate the k matrix
-    for (int i = 0 ; i  < _M ; ++i)
+    for (Int32 i = 0 ; i  < _M ; ++i)
     {
-        for (int j  = 0 ; j  <= _N / 2 ; ++j) // note <= _N/2 here, see the fftw notes about complex->real fft storage
+        for (Int32 j  = 0 ; j  <= _N / 2 ; ++j) // note <= _N/2 here, see the fftw notes about complex->real fft storage
         {
             _k(i,j) = sqrt(_kx(i)*_kx(i) + _kz(j)*_kz(j) );
         }
@@ -448,9 +449,9 @@ _L(V*V / g)               // largest wave for a given velocity V
     // calculate htilda0 (see Tessendorf notes)
     // The h0_minus component is not strictly neccessary
     // but lets leave it for the time being for clarity.
-    for (int i = 0 ; i  < _M ; ++i)
+    for (Int32 i = 0 ; i  < _M ; ++i)
     {
-        for (int j = 0 ; j  < _N ; ++j)
+        for (Int32 j = 0 ; j  < _N ; ++j)
         {
             my_float r1 = Imath::gaussRand(rand);
             my_float r2 = Imath::gaussRand(rand);
@@ -489,7 +490,7 @@ drw::my_float drw::Ocean::Ph(my_float kx,my_float kz ) const
 
 drw::my_float drw::Ocean::wavelength(my_float k)  const
 {
-    return 2.0f * pi / k;
+    return 2.0f * PI / k;
 }
 
 drw::my_float drw::Ocean::omega(my_float k) const
@@ -501,7 +502,7 @@ drw::my_float drw::Ocean::omega(my_float k) const
 
 
 
-void  drw::Ocean::update(float t, OceanContext& r, bool do_heightfield, bool do_chop, bool do_normal, bool do_jacobian, float scale, float chop_amount)
+void  drw::Ocean::update(float t, OceanContext& r, Bool do_heightfield, Bool do_chop, Bool do_normal, Bool do_jacobian, float scale, float chop_amount)
 {
     
     // fftw is re-entrant for fft_execute calls ... so we shouldn't need the following line ...
@@ -510,11 +511,11 @@ void  drw::Ocean::update(float t, OceanContext& r, bool do_heightfield, bool do_
     assert(r._M==_M && r._N==_N);
     
     // compute a new htilda
-    for (int i = 0 ; i  < _M ; ++i)
+    for (Int32 i = 0 ; i  < _M ; ++i)
     {
         // note the <= _N/2 here, see the fftw doco about
         // the mechanics of the complex->real fft storage
-        for (int j  = 0 ; j  <= _N / 2 ; ++j)
+        for (Int32 j  = 0 ; j  <= _N / 2 ; ++j)
         {
             r._htilda(i,j) = _h0(i,j) * exp(complex_f(0,omega(_k(i,j))*t))  + 
             conj(_h0_minus(i,j)) * exp(complex_f(0,-omega(_k(i,j))*t));
@@ -531,9 +532,9 @@ void  drw::Ocean::update(float t, OceanContext& r, bool do_heightfield, bool do_
     if (do_chop && r._do_chop)
     {
         // x displacement
-        for (int i = 0 ; i  < _M ; ++i)
+        for (Int32 i = 0 ; i  < _M ; ++i)
         {   
-            for (int j  = 0 ; j  <= _N / 2 ; ++j)
+            for (Int32 j  = 0 ; j  <= _N / 2 ; ++j)
             {     
                 r._fft_in(i,j) = -scale * chop_amount * minus_i * 
                 r._htilda(i,j) * (_k(i,j) == 0.0 ? complex_f(0,0) : _kx(i) / _k(i,j)) ;   
@@ -542,9 +543,9 @@ void  drw::Ocean::update(float t, OceanContext& r, bool do_heightfield, bool do_
         fftwf_execute(r._disp_x_plan);
         
         // z displacement
-        for (int i = 0 ; i  < _M ; ++i)
+        for (Int32 i = 0 ; i  < _M ; ++i)
         {   
-            for (int j  = 0 ; j  <= _N / 2 ; ++j) 
+            for (Int32 j  = 0 ; j  <= _N / 2 ; ++j) 
             {                    
                 r._fft_in(i,j) = -scale * chop_amount * minus_i * 
                 r._htilda(i,j) * (_k(i,j) == 0.0 ? complex_f(0,0) : _kz(j) / _k(i,j)) ;
@@ -557,18 +558,18 @@ void  drw::Ocean::update(float t, OceanContext& r, bool do_heightfield, bool do_
     // fft normals
     if (do_normal && r._do_normals)
     {
-        for (int i = 0 ; i  < _M ; ++i)
+        for (Int32 i = 0 ; i  < _M ; ++i)
         {
-            for (int j  = 0 ; j  <= _N / 2 ; ++j)
+            for (Int32 j  = 0 ; j  <= _N / 2 ; ++j)
             {     
                 r._fft_in(i,j) = - plus_i * r._htilda(i,j) * _kx(i)  ;   
             }
         }
         fftwf_execute(r._N_x_plan);
         
-        for (int i = 0 ; i  < _M ; ++i)
+        for (Int32 i = 0 ; i  < _M ; ++i)
         {   
-            for (int j  = 0 ; j  <= _N / 2 ; ++j) 
+            for (Int32 j  = 0 ; j  <= _N / 2 ; ++j) 
             {                    
                 r._fft_in(i,j) = - plus_i * r._htilda(i,j) * _kz(j) ;
             }
@@ -584,9 +585,9 @@ void  drw::Ocean::update(float t, OceanContext& r, bool do_heightfield, bool do_
     {
         
         // Jxx
-        for (int i = 0 ; i  < _M ; ++i)
+        for (Int32 i = 0 ; i  < _M ; ++i)
         {
-            for (int j  = 0 ; j  <= _N / 2 ; ++j)
+            for (Int32 j  = 0 ; j  <= _N / 2 ; ++j)
             {     
                 r._fft_in(i,j) = -scale * chop_amount * r._htilda(i,j) *  
                 (_k(i,j) == 0.0 ? complex_f(0,0) : _kx(i)*_kx(i) / _k(i,j));   
@@ -596,9 +597,9 @@ void  drw::Ocean::update(float t, OceanContext& r, bool do_heightfield, bool do_
         r._Jxx += 1.0;
         
         // Jzz
-        for (int i = 0 ; i  < _M ; ++i)
+        for (Int32 i = 0 ; i  < _M ; ++i)
         {
-            for (int j  = 0 ; j  <= _N / 2 ; ++j)
+            for (Int32 j  = 0 ; j  <= _N / 2 ; ++j)
             {     
                 r._fft_in(i,j) = -scale * chop_amount * r._htilda(i,j) * 
                 (_k(i,j) == 0.0 ? complex_f(0,0) : _kz(j)*_kz(j) / _k(i,j));
@@ -608,9 +609,9 @@ void  drw::Ocean::update(float t, OceanContext& r, bool do_heightfield, bool do_
         r._Jzz += 1.0;
         
         // Jxz
-        for (int i = 0 ; i  < _M ; ++i)
+        for (Int32 i = 0 ; i  < _M ; ++i)
         {
-            for (int j  = 0 ; j  <= _N / 2 ; ++j)
+            for (Int32 j  = 0 ; j  <= _N / 2 ; ++j)
             {     
                 r._fft_in(i,j) = -scale *chop_amount * r._htilda(i,j) * 
                 (_k(i,j) == 0.0 ? complex_f(0,0) : _kx(i)*_kz(j) / _k(i,j));  
@@ -633,11 +634,11 @@ float drw::Ocean::get_height_normalize_factor()
     
     my_float max_h = std::numeric_limits<my_float>::min( );
     
-    for (int i = 0 ; i < r->_disp_y.rows() ; ++i)
+    for (Int32 i = 0 ; i < r->_disp_y.rows() ; ++i)
     {
-        for (int j = 0 ; j  < r->_disp_y.cols()  ; ++j)
+        for (Int32 j = 0 ; j  < r->_disp_y.cols()  ; ++j)
         {   
-            max_h = std::max(max_h,fabsf(r->_disp_y(i,j)));
+            max_h = Max(max_h,fabsf(r->_disp_y(i,j)));
         }
     }
     
@@ -645,17 +646,17 @@ float drw::Ocean::get_height_normalize_factor()
     
     res = 1.0f / max_h;
     
-    delete r;
-    
+    //delete r;
+	DeleteMem(r);
     return res;
 }
 
 
 
 
-drw::OceanContext *drw::Ocean::new_context(bool hf,bool chop,bool normals,bool jacobian)
+drw::OceanContext *drw::Ocean::new_context(Bool hf,Bool chop,Bool normals,Bool jacobian)
 {
-     return gNew drw::OceanContext(_M,_N,_Lx,_Lz,hf,chop,normals,jacobian);
+     return NewObjClear(drw::OceanContext,_M,_N,_Lx,_Lz,hf,chop,normals,jacobian);
 }
 
 

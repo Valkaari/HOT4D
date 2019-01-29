@@ -17,22 +17,24 @@ C4D_CrashHandler old_handler;
 
 Bool RegisterWaveShaderDisp(void);
 Bool RegisterwaveMesh(void);
-Bool RegisterJacobShader(void);
-void SDKCrashHandler(CHAR *crashinfo)
-{
-	
-	// don't forget to call the original handler!!!
-	if (old_handler) (*old_handler)(crashinfo);
-}
+//Bool RegisterJacobShader(void);
 
 
 
 Bool PluginStart(void)
 {
 
-	if (!RegisterWaveShaderDisp()) return FALSE;
-    if (!RegisterwaveMesh()) return FALSE;
+	//if (!RegisterWaveShaderDisp()) return FALSE;
+    
 //    if (!RegisterJacobShader()) return FALSE;
+
+	GePrint(maxon::String("---------------"));
+	GePrint(maxon::String("HOT4D For R20 v0.4"));
+	GePrint(maxon::String("---------------"));
+	if (!RegisterwaveMesh()) return FALSE;
+	if (!RegisterWaveShaderDisp()) return FALSE;
+
+
 	return TRUE;
 }
 
@@ -41,7 +43,7 @@ void PluginEnd(void)
 	
 }
 
-Bool PluginMessage(LONG id, void *data)
+Bool PluginMessage(Int32 id, void *data)
 {
 	//use the following lines to set a plugin priority
 	//
@@ -49,13 +51,10 @@ Bool PluginMessage(LONG id, void *data)
 	{
 		case C4DPL_INIT_SYS:
 			
-			if (!resource.Init()) return FALSE; // don't start plugin without resource
+			if (!g_resource.Init()) return FALSE; // don't start plugin without resource
 			return TRUE;
 			
-		case C4DMSG_PRIORITY: 
-			return TRUE;
-			
-			
+		
 	}
 	
 	return FALSE;

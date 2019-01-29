@@ -12,48 +12,48 @@
 
 
 
-typedef std::complex<double> complexe;
+typedef std::complex<Float> complexe;
 
 
 
 
 struct Vec2D {
-	double x,y;
+	Float x,y;
 	Vec2D() {x=y=0.0;}
-	Vec2D(double in) { x = y= in;}
-	Vec2D(double ix, double iy){x = ix;y=iy;}
+	Vec2D(Float in) { x = y= in;}
+	Vec2D(Float ix, Float iy){x = ix;y=iy;}
 	
 	
 	
-	double GetLengthSquared(void) const {
+	Float GetLengthSquared(void) const {
 		return (x*x + y*y);	
 	}
-	double GetLength(void) const {
+	Float GetLength(void) const {
 		return sqrt(x*x+y*y);
 	}
 	// multiply by a vector DOT product
-	friend double operator * (const Vec2D &v1, const Vec2D &v2)
+	friend Float operator * (const Vec2D &v1, const Vec2D &v2)
 	{
 		return (v1.x*v2.x + v1.y*v2.y);	
 	}
     
 	// multiply by a scalar
-    friend Vec2D operator * (const Vec2D &v1,  double &scalar)
+    friend Vec2D operator * (const Vec2D &v1,  Float &scalar)
 	{
 		return Vec2D(v1.x*scalar , v1.y*scalar);	
 	}
-    friend Vec2D operator * (double &scalar, const Vec2D &v1)
+    friend Vec2D operator * (Float &scalar, const Vec2D &v1)
     {
         return Vec2D (scalar* v1.x,scalar*v1.y);
     }
     
     
     
-	friend Vec2D operator / (const Vec2D &v1,  double &scalar)
+	friend Vec2D operator / (const Vec2D &v1,  Float &scalar)
     {
         return Vec2D(v1.x/scalar, v1.y/scalar);
     }
-    friend Vec2D operator / (double &scalar, const Vec2D &v1)
+    friend Vec2D operator / (Float &scalar, const Vec2D &v1)
     {
         
         if ((v1.x != 0) && (v1.y != 0))
@@ -68,7 +68,7 @@ struct Vec2D {
     
     
     
-    friend Vec2D operator + (const Vec2D &v1,  double &add)
+    friend Vec2D operator + (const Vec2D &v1,  Float &add)
     {
         return Vec2D(v1.x+add,v1.y+add);
     }

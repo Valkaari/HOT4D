@@ -21,33 +21,33 @@
 Bool WaveShaderDisp::Init(GeListNode *node)
 {
 	BaseContainer *data = ((BaseShader*)node)->GetDataInstance();
-    data->SetLong(DISP_TYPE, TAN_DISP);
-    data->SetLong(OCEAN_RESOLUTION,6);
-    data->SetLong(SEED,12345);
+    data->SetInt32(DISP_TYPE, TAN_DISP);
+    data->SetInt32(OCEAN_RESOLUTION,6);
+    data->SetInt32(SEED,12345);
     
-    data->SetReal(OCEAN_SIZE,1);
-	data->SetReal(WIND_SPEED,60);
-    data->SetReal(WIND_DIRECTION,120.0);
-    data->SetReal(SHRT_WAVELENGHT,0.01);
-    data->SetReal(WAVE_HEIGHT,30);
-    data->SetReal(CHOPAMOUNT,0.97);
-    data->SetReal(DAMP_REFLECT,1.0);
-    data->SetReal(WIND_ALIGNMENT,1.0);
-    data->SetReal(OCEAN_DEPTH,200.0);
-    data->SetReal(TIME,0.0);
+    data->SetFloat(OCEAN_SIZE,1);
+	data->SetFloat(WIND_SPEED,60);
+    data->SetFloat(WIND_DIRECTION,120.0);
+    data->SetFloat(SHRT_WAVELENGHT,0.01);
+    data->SetFloat(WAVE_HEIGHT,30);
+    data->SetFloat(CHOPAMOUNT,0.97);
+    data->SetFloat(DAMP_REFLECT,1.0);
+    data->SetFloat(WIND_ALIGNMENT,1.0);
+    data->SetFloat(OCEAN_DEPTH,200.0);
+    data->SetFloat(TIME,0.0);
 
     data->SetBool(DO_CATMU_INTER,FALSE);
     data->SetBool(DO_JACOBIAN, FALSE);
     data->SetBool(DO_CHOPYNESS, TRUE);
    	return TRUE;
 }
-Real WaveShaderDisp::_MapRange(Real value, Real min_input, Real max_input, Real min_output, Real max_output)
+Float WaveShaderDisp::_MapRange(Float value, Float min_input, Float max_input, Float min_output, Float max_output)
 
 {
     
-    Real inrange = max_input - min_input;
+    Float inrange = max_input - min_input;
     
-    if (CompareFloatTolerant(value, RCO 0.0)) value = RCO 0.0;  // Prevent DivByZero error
+    if (CompareFloatTolerant(value, 0.0)) value =  0.0;  // Prevent DivByZero error
     
     else value = (value - min_input) / inrange;    // Map input range to [0.0 ... 1.0]
     
@@ -73,33 +73,33 @@ INITRENDERRESULT WaveShaderDisp::InitRender(BaseShader *sh, const InitRenderStru
     
 	BaseContainer *data = sh->GetDataInstance();
 	// get the data from UI
-    OceanResolution =    1 <<   data->GetLong(OCEAN_RESOLUTION);
-    Seed =                  data->GetLong(SEED);
+    OceanResolution =    1 <<   data->GetInt32(OCEAN_RESOLUTION);
+    Seed =                  data->GetInt32(SEED);
     
-    OceanSize =             data->GetReal(OCEAN_SIZE);
-	WindSpeed =             data->GetReal(WIND_SPEED);
-    WindDirection =         Rad(data->GetReal(WIND_DIRECTION));
-    ShrtWaveLenght =        data->GetReal(SHRT_WAVELENGHT)/1000;
-    WaveHeight =            data->GetReal(WAVE_HEIGHT);
-    chopAmount =            data->GetReal(CHOPAMOUNT);
-    DampReflection =        data->GetReal(DAMP_REFLECT);
-    WindAlign =             data->GetReal(WIND_ALIGNMENT);
-    OceanDepth =            data->GetReal(OCEAN_DEPTH);
-    Time =                  data->GetReal(TIME);
+    OceanSize =             data->GetFloat(OCEAN_SIZE);
+	WindSpeed =             data->GetFloat(WIND_SPEED);
+    WindDirection =         DegToRad(data->GetFloat(WIND_DIRECTION));
+    ShrtWaveLenght =        data->GetFloat(SHRT_WAVELENGHT)/1000;
+    WaveHeight =            data->GetFloat(WAVE_HEIGHT);
+    chopAmount =            data->GetFloat(CHOPAMOUNT);
+    DampReflection =        data->GetFloat(DAMP_REFLECT);
+    WindAlign =             data->GetFloat(WIND_ALIGNMENT);
+    OceanDepth =            data->GetFloat(OCEAN_DEPTH);
+    Time =                  data->GetFloat(TIME);
     
-    doCatmuInter =          !data->GetBool(DO_CATMU_INTER);
+    doCatmuInt32er =          !data->GetBool(DO_CATMU_INTER);
     doJacobian =            data->GetBool(DO_JACOBIAN);
     doChopyness =           data->GetBool(DO_CHOPYNESS);
     doNormals=              data->GetBool(DO_NORMALS) &&  !doChopyness;
-    disp_type=              data->GetLong(DISP_TYPE);
+    disp_type=              data->GetInt32(DISP_TYPE);
     
-    stepsize = OceanSize / (Real)OceanResolution;
+    stepsize = OceanSize / (Float)OceanResolution;
     oneOverStepSize = 1 / stepsize;
     
-    if (_ocean) {gDelete(_ocean);}
-    if (_ocean_context) {gDelete(_ocean_context);}
+    if (_ocean) {DeleteMem (_ocean);}
+    if (_ocean_context) {DeleteMem(_ocean_context);}
     
-    _ocean = gNew drw::Ocean(OceanResolution, OceanResolution, stepsize, stepsize , WindSpeed , ShrtWaveLenght , 1.0 , WindDirection , 1-DampReflection , WindAlign , OceanDepth , Seed);
+    _ocean = NewObjClear(drw::Ocean,OceanResolution, OceanResolution, stepsize, stepsize , WindSpeed , ShrtWaveLenght , 1.0 , WindDirection , 1-DampReflection , WindAlign , OceanDepth , Seed);
     
     _ocean_scale = _ocean->get_height_normalize_factor();
     
@@ -107,18 +107,20 @@ INITRENDERRESULT WaveShaderDisp::InitRender(BaseShader *sh, const InitRenderStru
     
     _ocean->update(Time, *_ocean_context, true, doChopyness, doNormals, doJacobian, _ocean_scale *WaveHeight, chopAmount);
     
-    GeFree(padr);
-    
+    //GeFree(padr);
+	DeleteMem(padr);
+
     pcnt = (OceanResolution + 1 ) * (OceanResolution +1);
-    padr = GeAllocTypeNC(Vector,pcnt );
-    if (!padr) return INITRENDERRESULT_OUTOFMEMORY;
+    //padr = GeAllocTypeNC(Vector,pcnt );
+	iferr (padr = NewMem(Vector, pcnt)) return INITRENDERRESULT::OUTOFMEMORY;
     
-    LONG i,j;
-    Real x,y;
+    
+    Int32 i,j;
+    Float x,y;
     
     for (x = 0 ,  j = 0 ; x <= OceanResolution ; x++,j++) {
         for ( y= 0, i=0; y <= OceanResolution ; y++,i++) {
-            if (doCatmuInter) {
+            if (doCatmuInt32er) {
                 _ocean_context->eval_xz(x * stepsize, y*stepsize);
             }
             else {
@@ -137,14 +139,14 @@ INITRENDERRESULT WaveShaderDisp::InitRender(BaseShader *sh, const InitRenderStru
            // padr[i+j*(OceanResolution + 1)] = Vector(_MapRange(x*y, 0, OceanResolution*OceanResolution, 0, 1));   
         }
     }
-  	return INITRENDERRESULT_OK;
+  	return INITRENDERRESULT::OK;
 }
 
 void WaveShaderDisp::FreeRender(BaseShader *sh)
 {
-    if (_ocean)          gDelete(_ocean);
-    if (_ocean_context ) gDelete(_ocean_context);
-    GeFree(padr);
+    if (_ocean)          DeleteMem(_ocean);
+    if (_ocean_context ) DeleteMem(_ocean_context);
+    //GeFree(padr);
     
 }
 
@@ -155,82 +157,82 @@ Vector WaveShaderDisp::Output(BaseShader *chn, ChannelData *cd)
     
     
 
-    Real r,g,b;
-    Real px, py;
+    Float r,g,b;
+    Float px, py;
     // be sure that 0= < (u,v) < 1
-    px = FMod((Real)cd->p.x,1.0);
-    py = FMod((Real)cd->p.y,1.0);
+    px = FMod((Float)cd->p.x,1.0);
+    py = FMod((Float)cd->p.y,1.0);
     if (px < 0) {px+=1.0;}
     if (py < 0) {py+=1.0;}
     
     px *= OceanResolution;
     py *= OceanResolution;
     
-    LONG intx = (LONG)floor(px) ;
-    LONG inty = (LONG)floor(py) ;
-    LONG intx1 = intx + 1;
-    LONG inty1 = inty + 1;
+    Int32 Int32x = (Int32)floor(px) ;
+    Int32 Int32y = (Int32)floor(py) ;
+    Int32 Int32x1 = Int32x + 1;
+    Int32 Int32y1 = Int32y + 1;
     
-    Real wx = px - intx;
-    Real wy = py - inty;
-    
-
-    intx = intx % OceanResolution;
-    inty = inty % OceanResolution;
-    intx1 = intx1 % OceanResolution;
-    inty1 = inty1 % OceanResolution;
-    
-    Vector pointValue = Vector(0.0);
+    Float wx = px - Int32x;
+    Float wy = py - Int32y;
     
 
-    //bilinear interpolation
- //   pointValue += padr[intx + inty* OceanResolution]* (1-wx) * (1-wy);
+    Int32x = Int32x % OceanResolution;
+    Int32y = Int32y % OceanResolution;
+    Int32x1 = Int32x1 % OceanResolution;
+    Int32y1 = Int32y1 % OceanResolution;
+    
+    Vector poInt32Value = Vector(0.0);
+    
+
+    //bilinear Int32erpolation
+ //   poInt32Value += padr[Int32x + Int32y* OceanResolution]* (1-wx) * (1-wy);
 /*    
-    if (intx1   < OceanResolution) {
+    if (Int32x1   < OceanResolution) {
 
-        pointValue += padr[intx1 + inty * OceanResolution] * wx * (1-wy);
+        poInt32Value += padr[Int32x1 + Int32y * OceanResolution] * wx * (1-wy);
     }
-    if( inty1  < OceanResolution ) {
+    if( Int32y1  < OceanResolution ) {
 
-        pointValue += padr[intx + inty1* OceanResolution] * (1-wx) * wy;
+        poInt32Value += padr[Int32x + Int32y1* OceanResolution] * (1-wx) * wy;
     }
     
-    if (( intx1 < OceanResolution) and (inty1 < OceanResolution)) {
+    if (( Int32x1 < OceanResolution) and (Int32y1 < OceanResolution)) {
 
-        pointValue += padr[intx1 + inty1*OceanResolution] * wx * wy;
+        poInt32Value += padr[Int32x1 + Int32y1*OceanResolution] * wx * wy;
     }
 
-    if (intx1> OceanResolution) {        return Vector(1,0,0);}
-    if (inty1 > OceanResolution) {        return Vector(1,0,0);}
+    if (Int32x1> OceanResolution) {        return Vector(1,0,0);}
+    if (Int32y1 > OceanResolution) {        return Vector(1,0,0);}
     
     */
     
-    pointValue += padr[intx + inty   * (OceanResolution+1) ]* (1-wx) * (1-wy);
-    pointValue += padr[intx1 + inty  * (OceanResolution+1) ] * wx * (1-wy);
-    pointValue += padr[intx + inty1  * (OceanResolution+1) ] * (1-wx) * wy;
-    pointValue += padr[intx1 + inty1 * (OceanResolution+1) ] * wx * wy;
-//    pointValue =  padr [intx + inty * (OceanResolution+1)];
+    poInt32Value += padr[Int32x + Int32y   * (OceanResolution+1) ]* (1-wx) * (1-wy);
+    poInt32Value += padr[Int32x1 + Int32y  * (OceanResolution+1) ] * wx * (1-wy);
+    poInt32Value += padr[Int32x + Int32y1  * (OceanResolution+1) ] * (1-wx) * wy;
+    poInt32Value += padr[Int32x1 + Int32y1 * (OceanResolution+1) ] * wx * wy;
+//    poInt32Value =  padr [Int32x + Int32y * (OceanResolution+1)];
 
     
     if(doJacobian) {
-        r = g = b = _MapRange(-pointValue.x,-2, 1, 0, 1);
+        r = g = b = _MapRange(-poInt32Value.x,-2, 1, 0, 1);
         
     }
     else {
         if (disp_type == TAN_DISP) {
-            r = _MapRange(pointValue.x, -WaveHeight, WaveHeight, 0, 1);
-            g = _MapRange(pointValue.z, -WaveHeight, WaveHeight, 0, 1);
-            b = _MapRange(pointValue.y, -WaveHeight, WaveHeight, 0, 1);
+            r = _MapRange(poInt32Value.x, -WaveHeight, WaveHeight, 0, 1);
+            g = _MapRange(poInt32Value.z, -WaveHeight, WaveHeight, 0, 1);
+            b = _MapRange(poInt32Value.y, -WaveHeight, WaveHeight, 0, 1);
         }
         else if (disp_type== WORLD_DISP) {
-            r = _MapRange(pointValue.x, -WaveHeight, WaveHeight, 0, 1);
-            g = _MapRange(pointValue.y, -WaveHeight, WaveHeight, 0, 1);
-            b = _MapRange(pointValue.z, -WaveHeight, WaveHeight, 0, 1) * -1;
+            r = _MapRange(poInt32Value.x, -WaveHeight, WaveHeight, 0, 1);
+            g = _MapRange(poInt32Value.y, -WaveHeight, WaveHeight, 0, 1);
+            b = _MapRange(poInt32Value.z, -WaveHeight, WaveHeight, 0, 1) * -1;
             
         }
     }
    
-   // r=g=b=pointValue.y;
+   // r=g=b=poInt32Value.y;
 
     
     
@@ -245,6 +247,7 @@ Vector WaveShaderDisp::Output(BaseShader *chn, ChannelData *cd)
 
 Bool RegisterWaveShaderDisp(void)
 {
-	return RegisterShaderPlugin(ID_WAVESHADER_DISP,"Wave Shader",0,WaveShaderDisp::Alloc,"Xhot4ddisp",0);
+
+	return RegisterShaderPlugin(ID_WAVESHADER_DISP,"Wave Shader"_s,0,WaveShaderDisp::Alloc,"Xhot4ddisp"_s,0);
 }
 
