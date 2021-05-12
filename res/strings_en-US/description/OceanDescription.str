@@ -1,0 +1,48 @@
+STRINGTABLE OceanDescription
+{
+	OceanDescription "Ocean Simulation";
+
+
+    OCEAN_RESOLUTION	"Ocean resolution";
+    OCEAN_SIZE          "Ocean Size(m)";
+    WIND_SPEED          "Wind Speed (m/s)";
+    WIND_DIRECTION      "Wind Direction";
+    SHRT_WAVELENGHT     "Shortest Wavelenght (m)";
+    WAVE_HEIGHT         "Approx WaveHeight (m)";
+    SEED                "Seed";
+    CHOPAMOUNT           "Chopyness";
+    DAMP_REFLECT        "Damp Reflection";
+    WIND_ALIGNMENT      "Wind Alignment";
+    OCEAN_DEPTH         "Ocean Depth";
+    TIMESCALE           "Time Scale";
+    CURRENTTIME         "Current Time";
+    TIMELOOP            "Time Loop frame";
+    AUTO_ANIM_TIME      "Auto Anim Time";
+    DO_CHOPYNESS        "Active Chop";
+    DO_CATMU_INTER      "Catmull-Rom Interpolation (low rez)";
+    DO_NORMALS          "Do Normals (not used)";
+    DO_JACOBIAN         "Do Jacobian";
+    ACTIVE_DEFORM       "Active Deform";
+    
+    JACOBMAP            "Jminus Map (Vertex Color Tag)";
+    FOAMMAP             "Foam Map (Vertex Color Tag)";
+    ID_GRP_FOAM         "Foam Group";
+    FOAM_THRES          "Foam Threshold";
+    JACOB_THRES         "Jacob_Threshold";
+    PRE_RUN_FOAM        "Pre Run Foam";
+    PSEL_PARTICLES      "Point Selection";
+    PSEL_THRES          "Particules Threshold";
+    RESO_4              "16x16";
+    RESO_5              "32x32";
+    RESO_6              "64x64";
+    RESO_7              "128x128";
+    RESO_8              "256x256";
+    RESO_9              "512x512";
+    RESO_10             "1024x1024";
+    RESO_11             "2048x2048";
+
+    
+    
+    
+    
+}
